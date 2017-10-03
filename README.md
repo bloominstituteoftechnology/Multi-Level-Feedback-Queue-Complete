@@ -9,10 +9,10 @@ blocking and non-blocking processes with multiple priority levels.
 One of the main jobs of operating system kernels is that they need to be able to execute all of the processes 
 running on your computer efficiently such that high priority processes are completed as quickly as possible,
 while also ensuring that there is some fairness in how they schedule processes; even if a process is a low 
-priority, it eventually needs to be complete execution.
+priority, it eventually needs to complete execution.
 
-In order to achieve this, schedulers essentially iterate through all of the processes on your computer, grab
-the highest priority process and execute it for a time quantum. Once the time quantum is up, the process has
+In order to achieve this, schedulers iterate through all of the processes on your computer, grab the highest 
+priority process and execute it for a time quantum (a slice of time). Once the time quantum is up, the process has
 either completed or it hasn't. If it hasn't, then the process is shunted to the next lower priority queue to
 wait until it is its turn again. If the process completed during the initial time quantum, then it gets 
 discarded and the scheduler moves on to the next process in line. 
@@ -27,9 +27,9 @@ being added to the scheduling queue.
 ### Architecture
 ![alt text](./assets/mlfq_diagram.png)
 
-Our MLFQ implementation will comprise of two types of queues, a blocking queue and a CPU queue. The blocking queue
-is where blocking processes go, all other processes go in the CPU queues. There will be one blocking queue and 
-three CPU queues in our implementation. Each queue will have a different priority level, with different time 
+Our MLFQ implementation will comprise of two types of queues, blocking queues and CPU queues. There will be one 
+blocking queue and three CPU queues in our implementation. The blocking queue is where blocking processes go, 
+all other processes go in the CPU queues. Each queue will have a different priority level, with different time 
 quantums (which designate how much time each process in the associated queue receives from the CPU). 
 
 The blocking queue will have the highest priority (since we want to get through blocking processes as soon as 
@@ -39,10 +39,10 @@ class to represent the scheduler itself. Then, inside `main.js` is where these c
 simulate a scheduler working through processes. 
 
 Another important aspect that should be touched on is how queues, processes, and the scheduler all communicate 
-with each other. For example, a process may need to let the scheduler and the ueue it is currently in know that 
-the process has started a blocking operation, and thus needs to be moved to the blocking queue. Or conversely, 
-a blocking process will need to notify the scheduler and its queue that it has finished its blocking operation, 
-and can thus be moved to a CPU queue. 
+with each other. For example, a process may need to let the scheduler and its parent queue know that the process 
+has started a blocking operation, and thus needs to be moved to the blocking queue. Or conversely, a blocking 
+process will need to notify the scheduler and its queue that it has finished its blocking operation, and can thus 
+be moved to a CPU queue. 
 
 ### Algorithm
 The pseudo code for our MLFQ implementation is as follows:
@@ -50,9 +50,10 @@ The pseudo code for our MLFQ implementation is as follows:
 Loop:
     If a process exists in the blocking queue:
         Work on removing each process in the blocking queue on a First Come First Serve basis
-        When a process completes it blocking operation, emit an interrupt to the scheduler
+        Do blocking work (since we're in the blocking queue)
+        When a process completes its blocking operation, emit an interrupt to the scheduler
         The scheduler removes the process from the blocking queue
-        Adds it back to the highest priority level CPU queue
+        Adds it to the highest priority level CPU queue
 
     Iterate from the top priority CPU queue to the lowest priority CPU queue until we find a process
     If a process is found:
