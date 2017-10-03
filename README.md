@@ -27,22 +27,42 @@ being added to the scheduling queue.
 ### Architecture
 ![alt text](./assets/mlfq_diagram.png)
 
+Our MLFQ implementation will comprise of two types of queues, a blocking queue and a CPU queue. The blocking queue
+is where blocking processes go, all other processes go in the CPU queues. There will be one blocking queue and 
+three CPU queues in our implementation. Each queue will have a different priority level, with different time 
+quantums (which designate how much time each process in the associated queue receives from the CPU). 
+
+The blocking queue will have the highest priority (since we want to get through blocking processes as soon as 
+possible), followed by the three CPU queues. You'll be implementing three classes, a Process class to represent 
+blocking and non-blocking processes, a Queue class to represent the different types of queues, and a Scheduler 
+class to represent the scheduler itself. Then, inside `main.js` is where these classes will be executed to 
+simulate a scheduler working through processes. 
+
+Another important aspect that should be touched on is how queues, processes, and the scheduler all communicate 
+with each other. For example, a process may need to let the scheduler and the ueue it is currently in know that 
+the process has started a blocking operation, and thus needs to be moved to the blocking queue. Or conversely, 
+a blocking process will need to notify the scheduler and its queue that it has finished its blocking operation, 
+and can thus be moved to a CPU queue. 
+
 ### Algorithm
 The pseudo code for our MLFQ implementation is as follows:
 ```
 Loop:
     If a process exists in the blocking queue:
         Work on removing each process in the blocking queue on a First Come First Serve basis
-        When a process is removed from the blocking queue, add it back to the highest priority level CPU queue
+        When a process completes it blocking operation, emit an interrupt to the scheduler
+        The scheduler removes the process from the blocking queue
+        Adds it back to the highest priority level CPU queue
 
     Iterate from the top priority CPU queue to the lowest priority CPU queue until we find a process
     If a process is found:
         Work on that process until the end of the queue's specified time quantum
             Do non-blocking work (since we're in the non-blocking CPU queues)
             If the process becomes blocking:
-                Remove it from the CPU queue
-                Place it on the blocking queue
-                Restart the time quantum with the next process in the CPU queue
+                Emit an interrupt to the scheduler notifying it that the process has become blocking
+                The scheduler removes the now-blocking process from the CPU queue
+                Places it on the blocking queue
+                Restarts the time quantum with the next process in the CPU queue
 
         If the end of the time quantum has been reached:
             Remove the process that is currently being worked on from the top of the CPU queue

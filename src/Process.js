@@ -27,7 +27,7 @@ class Process {
                     console.log("Process Blocked!");
                     this.blockingTimeNeeded = Math.round(Math.random() * 1000);
                     // process entered blocked state
-                    this.queue.event(this, SchedulerInterrupt.PROCESS_BLOCKED);
+                    this.queue.emitInterrupt(this, SchedulerInterrupt.PROCESS_BLOCKED);
                     this.stateChanged = true;
                 }
             }
