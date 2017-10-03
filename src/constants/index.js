@@ -4,7 +4,7 @@ const SchedulerInterrupt = {
     LOWER_PRIORITY: 'LOWER_PRIORITY',
 };
 
-const QueueType {
+const QueueType = {
     CPU_QUEUE: 'CPU_QUEUE',
     BLOCKED_QUEUE: 'BLOCKED_QUEUE',
 };

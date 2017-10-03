@@ -14,18 +14,18 @@ class Process {
     }
 
     isFinished() {
-        return cpuTimeNeeded === 0;
+        return this.cpuTimeNeeded === 0;
     }
 
     executeProcess(time) {
-        if (blockingTimeNeeded === 0) {
-            cpuTimeNeeded -= time;
-            cpuTimeNeeded = cpuTimeNeeded > 0 ? cpuTimeNeeded : 0;
+        if (this.blockingTimeNeeded === 0) {
+            this.cpuTimeNeeded -= time;
+            this.cpuTimeNeeded = this.cpuTimeNeeded > 0 ? this.cpuTimeNeeded : 0;
 
             if (!this.isFinished()) {
                 if (Math.random() < 0.25) {
                     console.log("Process Blocked!");
-                    blockingTimeNeeded = Math.round(Math.random() * 1000);
+                    this.blockingTimeNeeded = Math.round(Math.random() * 1000);
                     // process entered blocked state
                     this.queue.event(this, SchedulerInterrupt.PROCESS_BLOCKED);
                     this.stateChanged = true;
@@ -35,10 +35,10 @@ class Process {
     }
 
     executeBlockingProcess(time) {
-        blockingTimeNeeded -= time;
-        blockingTimeNeeded = blockingTimeNeeded > 0 ? blockingTimeNeeded : 0;
+        this.blockingTimeNeeded -= time;
+        this.blockingTimeNeeded = this.blockingTimeNeeded > 0 ? this.blockingTimeNeeded : 0;
         
-        if (blockingTimeNeeded === 0) {
+        if (this.blockingTimeNeeded === 0) {
             this.queue.event(this, SchedulerInterrupt.PROCESS_READY);
             this.stateChanged = true;
         }

@@ -1,4 +1,4 @@
-const Schdeuler = require('./Scheduler');
+const Scheduler = require('./Scheduler');
 const Process = require('./Process');
 
 const main = () => {
