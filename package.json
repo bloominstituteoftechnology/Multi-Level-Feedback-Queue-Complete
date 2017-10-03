@@ -4,6 +4,7 @@
     "description": "LambadSchool's Multi-level feedback queue exercise",
     "main": "index.js",
     "scripts": {
+        "start": "node src/main.js",
         "test": "eslint tests/*.js && eslint src/*.js && jest --verbose",
         "lint": "eslint",
         "test:watch": "npm test --watch"
