@@ -39,7 +39,7 @@ class Process {
         this.blockingTimeNeeded = this.blockingTimeNeeded > 0 ? this.blockingTimeNeeded : 0;
         
         if (this.blockingTimeNeeded === 0) {
-            this.queue.event(this, SchedulerInterrupt.PROCESS_READY);
+            this.queue.emitInterrupt(this, SchedulerInterrupt.PROCESS_READY);
             this.stateChanged = true;
         }
     }

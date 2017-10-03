@@ -19,10 +19,10 @@ class Queue {
         this.quantumClock += time;
         if (this.quantumClock > this.quantum) {
             this.quantumClock = 0;
-            const process = this.processes.shift();
+            const process = this.dequeue();
 
             if (!process.isFinished()) {
-                this.scheduler.event(this. process, SchedulerInterrupt.LOWER_PRIORITY);
+                this.scheduler.emitInterrupt(this. process, SchedulerInterrupt.LOWER_PRIORITY);
             } else {
                 console.log("Process complete!");
             }
@@ -30,13 +30,13 @@ class Queue {
     }
 
     doCPUWork(time) {
-        const process = this.processes[0];
+        const process = this.peek();
         process.executeProcess(time);
         this.manageTimeSlice(process, time);
     }
 
     doBlockingWork(time) {
-        const process = this.processes[0];
+        const process = this.peek();
         process.executeBlockingProcess(time);
         this.manageTimeSlice(process, time);
     }
@@ -45,7 +45,7 @@ class Queue {
         return this.processes.length === 0;
     }
 
-    event(source, interrupt) {
+    emitInterrupt(source, interrupt) {
         const sourceIndex = this.processes.findIndex(process => {
             process.pid === source.pid;
         });
@@ -53,10 +53,10 @@ class Queue {
 
         switch(interrupt) {
             case 'PROCESS_BLOCKED':
-                this.scheduler.event(this, source, SchedulerInterrupt.PROCESS_BLOCKED);
+                this.scheduler.emitInterrupt(this, source, SchedulerInterrupt.PROCESS_BLOCKED);
                 break;
             case 'PROCESS_READY':
-                this.scheduler.event(this, source, SchedulerInterrupt.PROCESS_READY);
+                this.scheduler.emitInterrupt(this, source, SchedulerInterrupt.PROCESS_READY);
                 break;
         }
     }
@@ -68,6 +68,10 @@ class Queue {
 
     dequeue() {
         return this.processes.shift();
+    }
+
+    peek() {
+        return this.processes[0];
     }
 
     getPriorityLevel() {

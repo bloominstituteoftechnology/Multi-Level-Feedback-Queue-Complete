@@ -7,7 +7,7 @@ const {
 class Scheduler { 
     constructor() { 
         this.clock = Date.now();
-        this.blockedQueue = new Queue(this, 50, 0, QueueType.BLOCKED_QUEUE);
+        this.blockingQueue = new Queue(this, 50, 0, QueueType.BLOCKING_QUEUE);
         this.runningQueues = [];
 
         for (let i = 0; i < PRIORITY_LEVELS; i++) {
@@ -21,8 +21,8 @@ class Scheduler {
             const workTime = time - this.clock;
             this.clock = time;
 
-            if (!this.blockedQueue.isEmpty()) {
-                this.blockedQueue.doBlockingWork(workTime);
+            if (!this.blockingQueue.isEmpty()) {
+                this.blockingQueue.doBlockingWork(workTime);
             }
 
             for (let i = 0; i < PRIORITY_LEVELS; i++) {
@@ -49,17 +49,17 @@ class Scheduler {
             }
         }
 
-        return this.blockedQueue.isEmpty();
+        return this.blockingQueue.isEmpty();
     }
 
     addNewProcess(process) {
         this.runningQueues[0].enqueue(process);
     }
 
-    event(queue, process, interrupt) {
+    emitInterrupt(queue, process, interrupt) {
         switch(interrupt) {
             case 'PROCESS_BLOCKED':
-                this.blockedQueue.enqueue(process);
+                this.blockingQueue.enqueue(process);
                 break;
             case 'PROCESS_READY':
                 this.addNewProcess(process);
@@ -69,7 +69,7 @@ class Scheduler {
                     const priorityLevel = Math.min(PRIORITY_LEVELS - 1, queue.getPriorityLevel() + 1);
                     this.runningQueues[priorityLevel].enqueue(process);
                 } else {
-                    this.blockedQueue.enqueue(process);
+                    this.blockingQueue.enqueue(process);
                 }
                 break;
             default:
