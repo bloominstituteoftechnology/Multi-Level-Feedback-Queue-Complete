@@ -74,4 +74,22 @@ describe('Queue', () => {
         expect(queueSpy.calledWith(process, 51)).toBe(true);
         expect(schedulerSpy.getCalls().length).toBe(0);
     });
+
+    it('should return true when `isEmpty` is called on an empty queue', () => {
+        expect(queue.isEmpty()).toBe(true);
+        const process = new Process(0);
+        queue.enqueue(process);
+        expect(queue.isEmpty()).toBe(false);
+    });
+
+    it('should remove the source process from the queue and emit the input interrupt to the scheduler', () => {
+        const schedulerSpy = sinon.spy(scheduler, "emitInterrupt");
+        const process1 = new Process(0);
+        const process2 = new Process(1);
+        queue.enqueue(process1);
+        queue.enqueue(process2);
+        queue.emitInterrupt(process1, SchedulerInterrupt.PROCESS_BLOCKED);
+        expect(queue.peek()).toBe(process2);
+        expect(schedulerSpy.calledWith(queue, process1, SchedulerInterrupt.PROCESS_BLOCKED)).toBe(true);
+    });
 });

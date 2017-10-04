@@ -46,9 +46,7 @@ class Queue {
     }
 
     emitInterrupt(source, interrupt) {
-        const sourceIndex = this.processes.findIndex(process => {
-            process.pid === source.pid;
-        });
+        const sourceIndex = this.processes.indexOf(source);
         this.processes.splice(sourceIndex, 1);
 
         switch(interrupt) {
@@ -57,6 +55,8 @@ class Queue {
                 break;
             case 'PROCESS_READY':
                 this.scheduler.emitInterrupt(this, source, SchedulerInterrupt.PROCESS_READY);
+                break;
+            default:
                 break;
         }
     }
