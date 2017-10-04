@@ -1,11 +1,11 @@
 const { SchedulerInterrupt } = require('./constants/index');
 
 class Process {
-    constructor(pid) {
+    constructor(pid, cpuTimeNeeded=null, blocking=false) {
         this._pid = pid;
         this.queue = null;
-        this.cpuTimeNeeded = Math.round(Math.random() * 10000);
-        this.blockingTimeNeeded = null;
+        this.cpuTimeNeeded = cpuTimeNeeded ? cpuTimeNeeded : Math.round(Math.random() * 10000);
+        this.blockingTimeNeeded = blocking ? Math.round(Math.random() * 1000) : 0;
         this.stateChanged = false;
     }
     
@@ -50,6 +50,10 @@ class Process {
 
     get pid() {
         return this._pid;
+    }
+
+    _getParentQueue() {
+        return this.queue;
     }
 }
 

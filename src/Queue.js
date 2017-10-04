@@ -22,7 +22,7 @@ class Queue {
             const process = this.dequeue();
 
             if (!process.isFinished()) {
-                this.scheduler.emitInterrupt(this. process, SchedulerInterrupt.LOWER_PRIORITY);
+                this.scheduler.emitInterrupt(this, process, SchedulerInterrupt.LOWER_PRIORITY);
             } else {
                 console.log("Process complete!");
             }

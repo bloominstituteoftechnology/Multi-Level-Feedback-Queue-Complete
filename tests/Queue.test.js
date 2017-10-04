@@ -1,17 +1,18 @@
+const sinon = require('sinon');
 const Queue = require('../src/Queue');
 const Process = require('../src/Process');
 const Scheduler = require('../src/Scheduler');
 const { 
     SchedulerInterrupt,
     QueueType,
-} = require('../constants/index');
+} = require('../src/constants/index');
 
 let queue, scheduler;
 
 describe('Queue', () => {
     beforeEach(() => {
        scheduler = new Scheduler();
-       queue = new Queue(scheduler, 50, 0, QueueType.BLOCKING_QUEUE);
+       queue = new Queue(scheduler, 50, 0, QueueType.CPU_QUEUE);
     });
     
     it('should have the methods "enqueue", "dequeue", "peek", "getPriorityLevel", "getQueueType", "emitInterrupt", "isEmpty", "doCPUWork", "doBlockingWork", and "manageTimeSlice"', () => {
@@ -39,7 +40,7 @@ describe('Queue', () => {
         const process2 = new Process(1);
         queue.enqueue(process1);
         queue.enqueue(process2);
-        expect(queue.peek()).toBe(process2); 
+        expect(queue.peek()).toBe(process1); 
     });
 
     it('should dequeue processes in first in first out order', () => {
@@ -47,7 +48,30 @@ describe('Queue', () => {
         const process2 = new Process(1);
         queue.enqueue(process1);
         queue.enqueue(process2);
-        expect(queue.dequeue()).toBe(process2);
-        expect(queue.peek()).toBe(process1);
+        expect(queue.dequeue()).toBe(process1);
+        expect(queue.peek()).toBe(process2);
     });
 
+    it('should return the correct Queue type and priority level', () => {
+        expect(queue.getQueueType()).toBe(QueueType.CPU_QUEUE);
+        expect(queue.getPriorityLevel()).toBe(0);
+    });
+
+    it('should properly manage a child process that did not complete execution during the allotted time quantum', () => {
+        const schedulerSpy = sinon.spy(scheduler, "emitInterrupt");
+        const process = new Process(0, 60);
+        queue.enqueue(process);
+        queue.doCPUWork(51);
+        expect(schedulerSpy.calledWith(queue, process, SchedulerInterrupt.LOWER_PRIORITY)).toBe(true);
+    });
+
+    it('should properly manage a child process that completed execution during the allotted time quantum', () => {
+        const schedulerSpy = sinon.spy(scheduler, "emitInterrupt");
+        const queueSpy = sinon.spy(queue, "manageTimeSlice");
+        const process = new Process(0, 49);
+        queue.enqueue(process);
+        queue.doCPUWork(51);
+        expect(queueSpy.calledWith(process, 51)).toBe(true);
+        expect(schedulerSpy.getCalls().length).toBe(0);
+    });
+});
