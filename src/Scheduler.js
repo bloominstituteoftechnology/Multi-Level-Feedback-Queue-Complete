@@ -76,6 +76,14 @@ class Scheduler {
                 break;
         }
     }
+
+    _getCPUQueue(priorityLevel) {
+        return this.runningQueues[priorityLevel];
+    }
+
+    _getBlockingQueue() {
+        return this.blockingQueue;
+    }
 }
 
 module.exports = Scheduler;

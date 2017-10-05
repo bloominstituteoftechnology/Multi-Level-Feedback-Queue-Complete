@@ -14,7 +14,7 @@ class Process {
     }
 
     isFinished() {
-        return (this.cpuTimeNeeded === 0 && this.blockingTimeNeeded === 0);
+        return this.cpuTimeNeeded === 0;
     }
 
     executeProcess(time) {
@@ -32,7 +32,7 @@ class Process {
                 }
             }
         }
-    }
+   }
 
     executeBlockingProcess(time) {
         this.blockingTimeNeeded -= time;
