@@ -37,7 +37,7 @@ class Scheduler {
                 console.log("Idle mode");
                 break;
             } else {
-                console.log(this);
+                // console.log(this);
             }
         }
     }
