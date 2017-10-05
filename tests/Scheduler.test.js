@@ -64,17 +64,27 @@ describe('Queue', () => {
 
     it('should run until all processes have completed execution', () => {
         const process1 = new Process(0);
-        const process2 = new Process(1, 100, true);
+        const process2 = new Process(1, 0, true);
         const process3 = new Process(2, 500);
+
         const blockingQueue = scheduler._getBlockingQueue();
         const queue1 = scheduler._getCPUQueue(0);
         const queue2 = scheduler._getCPUQueue(1);
         const queue3 = scheduler._getCPUQueue(2);
+
+        const schedulerSpy = sinon.spy(scheduler, 'allEmpty');
+        const blockingQueueSpy = sinon.spy(blockingQueue, 'doBlockingWork');
+        const queue1Spy = sinon.spy(queue1, 'doCPUWork');
+
         scheduler.addNewProcess(process1);
         scheduler.addNewProcess(process2);
         scheduler.addNewProcess(process3);
         scheduler.run();
+
+        expect(blockingQueueSpy.called).toBe(true);
+        expect(queue1Spy.called).toBe(true);
         expect(blockingQueue.isEmpty()).toBe(true);
+        expect(schedulerSpy.called).toBe(true);
         expect(queue1.isEmpty()).toBe(true);
         expect(queue2.isEmpty()).toBe(true);
         expect(queue3.isEmpty()).toBe(true);

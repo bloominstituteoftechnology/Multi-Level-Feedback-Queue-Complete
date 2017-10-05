@@ -4,8 +4,8 @@ class Process {
     constructor(pid, cpuTimeNeeded=null, blocking=false) {
         this._pid = pid;
         this.queue = null;
-        this.cpuTimeNeeded = cpuTimeNeeded ? cpuTimeNeeded : Math.round(Math.random() * 10000);
-        this.blockingTimeNeeded = blocking ? Math.round(Math.random() * 1000) : 0;
+        this.cpuTimeNeeded = cpuTimeNeeded ? cpuTimeNeeded : Math.round(Math.random() * 1000);
+        this.blockingTimeNeeded = blocking ? Math.round(Math.random() * 100) : 0;
         this.stateChanged = false;
     }
     
@@ -14,23 +14,27 @@ class Process {
     }
 
     isFinished() {
-        return this.cpuTimeNeeded === 0;
+        return (this.cpuTimeNeeded === 0 && this.blockingTimeNeeded === 0);
     }
 
     executeProcess(time) {
+        this.stateChanged = false;
         if (this.blockingTimeNeeded === 0) {
             this.cpuTimeNeeded -= time;
             this.cpuTimeNeeded = this.cpuTimeNeeded > 0 ? this.cpuTimeNeeded : 0;
 
-            if (!this.isFinished()) {
-                if (Math.random() < 0.25) {
-                    console.log("Process Blocked!");
-                    this.blockingTimeNeeded = Math.round(Math.random() * 1000);
-                    // process entered blocked state
-                    this.queue.emitInterrupt(this, SchedulerInterrupt.PROCESS_BLOCKED);
-                    this.stateChanged = true;
-                }
-            }
+            // if (!this.isFinished()) {
+            //     if (Math.random() < 0.1) {
+            //         console.log("Process Blocked!");
+            //         this.blockingTimeNeeded = Math.round(Math.random() * 100);
+            //         // process entered blocked state
+            //         this.queue.emitInterrupt(this, SchedulerInterrupt.PROCESS_BLOCKED);
+            //         this.stateChanged = true;
+            //     }
+            // }
+        } else {
+            this.queue.emitInterrupt(this, SchedulerInterrupt.PROCESS_BLOCKED);
+            this.stateChanged = true; 
         }
    }
 
