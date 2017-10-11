@@ -22,7 +22,7 @@ class Queue {
             const process = this.dequeue();
 
             if (!process.isFinished()) {
-                this.scheduler.emitInterrupt(this, process, SchedulerInterrupt.LOWER_PRIORITY);
+                this.scheduler.handleInterrupt(this, process, SchedulerInterrupt.LOWER_PRIORITY);
             } else {
                 console.log("Process complete!");
             }
@@ -51,10 +51,10 @@ class Queue {
 
         switch(interrupt) {
             case 'PROCESS_BLOCKED':
-                this.scheduler.emitInterrupt(this, source, SchedulerInterrupt.PROCESS_BLOCKED);
+                this.scheduler.handleInterrupt(this, source, SchedulerInterrupt.PROCESS_BLOCKED);
                 break;
             case 'PROCESS_READY':
-                this.scheduler.emitInterrupt(this, source, SchedulerInterrupt.PROCESS_READY);
+                this.scheduler.handleInterrupt(this, source, SchedulerInterrupt.PROCESS_READY);
                 break;
             default:
                 break;
