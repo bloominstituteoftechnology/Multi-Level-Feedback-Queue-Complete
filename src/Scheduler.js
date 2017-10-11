@@ -56,7 +56,7 @@ class Scheduler {
         this.runningQueues[0].enqueue(process);
     }
 
-    emitInterrupt(queue, process, interrupt) {
+    handleInterrupt(queue, process, interrupt) {
         switch(interrupt) {
             case 'PROCESS_BLOCKED':
                 this.blockingQueue.enqueue(process);
