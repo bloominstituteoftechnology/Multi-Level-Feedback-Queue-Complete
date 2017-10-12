@@ -29,6 +29,7 @@ class Scheduler {
                 const queue = this.runningQueues[i];
                 if (!queue.isEmpty()) {
                     queue.doCPUWork(workTime);
+                    break;
                 }
             }
 
