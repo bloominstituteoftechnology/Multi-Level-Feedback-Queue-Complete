@@ -16,7 +16,7 @@ class Queue {
             return;
         }
 
-        this.quantumClock += time
+        this.quantumClock += time;
         if (this.quantumClock >= this.quantum) {
             this.quantumClock = 0;
             const process = this.dequeue();
