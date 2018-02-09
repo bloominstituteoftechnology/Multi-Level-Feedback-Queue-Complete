@@ -43,13 +43,7 @@ class Scheduler {
     }
 
     allEmpty() {
-        for (let i = 0; i < this.runningQueues.length; i++) {
-            if (!this.runningQueues[i].isEmpty()) {
-                return false;
-            }
-        }
-
-        return this.blockingQueue.isEmpty();
+        return this.runningQueues.every((queue) => queue.isEmpty() && this.blockingQueue.isEmpty());
     }
 
     addNewProcess(process) {
