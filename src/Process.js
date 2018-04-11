@@ -4,7 +4,7 @@ class Process {
     constructor(pid, cpuTimeNeeded=null, blocking=false) {
         this._pid = pid;
         this.queue = null;
-        this.cpuTimeNeeded = cpuTimeNeeded ? cpuTimeNeeded : Math.round(Math.random() * 1000);
+        this.cpuTimeNeeded = (cpuTimeNeeded !== null) ? cpuTimeNeeded : Math.round(Math.random() * 1000);
         this.blockingTimeNeeded = blocking ? Math.round(Math.random() * 100) : 0;
         this.stateChanged = false;
     }
