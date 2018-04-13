@@ -93,7 +93,7 @@ describe('Queue', () => {
         expect(queue.peek()).toBe(process);
     });
 
-    test("manageTimeSlice method on process that receives more time than the queue's time quantum but process isn't complete", () => {
+    test("manageTimeSlice method on process that receives more time than the queue's time quantum but process has not completed", () => {
         const schedulerSpy = sinon.spy(scheduler, 'handleInterrupt'); 
         const process = new Process(0, 60);
 
@@ -101,13 +101,14 @@ describe('Queue', () => {
         process.executeProcess(51);
         queue.manageTimeSlice(process, 51);
 
+        expect(queue.quantumClock).toBe(0);
         expect(process.isFinished()).toBe(false);
         expect(queue.peek()).toBeUndefined();
 
         expect(schedulerSpy.calledOnce).toBe(true);
     });
 
-    test("manageTimeSlice method on process that receives more time than the queue's time quantum but process is complete", () => {
+    test("manageTimeSlice method on process that receives more time than the queue's time quantum but process has completed", () => {
         const schedulerSpy = sinon.spy(scheduler, 'handleInterrupt'); 
         const process = new Process(0, 60);
 
@@ -115,6 +116,7 @@ describe('Queue', () => {
         process.executeProcess(60);
         queue.manageTimeSlice(process, 60);
 
+        expect(queue.quantumClock).toBe(0);
         expect(process.isFinished()).toBe(true);
         expect(queue.peek()).toBeUndefined();
 
