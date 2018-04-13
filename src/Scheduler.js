@@ -34,16 +34,14 @@ class Scheduler {
             }
 
             if (this.allQueuesEmpty()) {
-                console.log("Idle mode");
+                console.log("No more processes! I can sleep now.");
                 break;
-            } else {
-                // console.log(this);
             }
         }
     }
 
     allQueuesEmpty() {
-        return this.runningQueues.every((queue) => queue.isEmpty() && this.blockingQueue.isEmpty());
+        return this.runningQueues.every(queue => queue.isEmpty()) && this.blockingQueue.isEmpty();
     }
 
     addNewProcess(process) {
