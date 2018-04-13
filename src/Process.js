@@ -22,16 +22,6 @@ class Process {
         if (this.blockingTimeNeeded === 0) {
             this.cpuTimeNeeded -= time;
             this.cpuTimeNeeded = this.cpuTimeNeeded > 0 ? this.cpuTimeNeeded : 0;
-
-            // if (!this.isFinished()) {
-            //     if (Math.random() < 0.1) {
-            //         console.log("Process Blocked!");
-            //         this.blockingTimeNeeded = Math.round(Math.random() * 100);
-            //         // process entered blocked state
-            //         this.queue.emitInterrupt(this, SchedulerInterrupt.PROCESS_BLOCKED);
-            //         this.stateChanged = true;
-            //     }
-            // }
         } else {
             this.queue.emitInterrupt(this, SchedulerInterrupt.PROCESS_BLOCKED);
             this.stateChanged = true; 

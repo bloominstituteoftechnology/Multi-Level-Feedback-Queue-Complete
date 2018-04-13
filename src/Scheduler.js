@@ -33,7 +33,7 @@ class Scheduler {
                 }
             }
 
-            if (this.allEmpty()) {
+            if (this.allQueuesEmpty()) {
                 console.log("Idle mode");
                 break;
             } else {
@@ -42,7 +42,7 @@ class Scheduler {
         }
     }
 
-    allEmpty() {
+    allQueuesEmpty() {
         return this.runningQueues.every((queue) => queue.isEmpty() && this.blockingQueue.isEmpty());
     }
 

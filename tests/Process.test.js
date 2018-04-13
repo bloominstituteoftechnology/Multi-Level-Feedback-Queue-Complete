@@ -39,45 +39,45 @@ describe('Process', () => {
 
     test("isStateChanged function", () => {
         const process = new Process(0, 10);
-        expect(process.isStateChanged()).toEqual(false);
+        expect(process.isStateChanged()).toBe(false);
         process.stateChanged = true;
-        expect(process.isStateChanged()).toEqual(true);
+        expect(process.isStateChanged()).toBe(true);
     });
 
     test("isFinished function", () => {
         let process = new Process(0, 0, true);
         process.blockingTimeNeeded = 10;
-        expect(process.isFinished()).toEqual(false);
+        expect(process.isFinished()).toBe(false);
 
         process = new Process(0, 10);
         process.blockingTimeNeeded = 0;
-        expect(process.isFinished()).toEqual(false);
+        expect(process.isFinished()).toBe(false);
 
         process = new Process(0, 0);
         process.blockingTimeNeeded = 0;
-        expect(process.isFinished()).toEqual(true);
+        expect(process.isFinished()).toBe(true);
     });
 
     test("executeProcess function running to completion", () => {
         const process1 = new Process(0, 30);
         process1.executeProcess(30);
         expect(process1.isFinished()).toBe(true);
-        expect(process1.cpuTimeNeeded).toEqual(0);
-        expect(process1.isStateChanged()).toEqual(false);
+        expect(process1.cpuTimeNeeded).toBe(0);
+        expect(process1.isStateChanged()).toBe(false);
 
         const process2 = new Process(0, 30);
         process2.executeProcess(32);
         expect(process2.isFinished()).toBe(true);
-        expect(process2.cpuTimeNeeded).toEqual(0);
-        expect(process2.isStateChanged()).toEqual(false);
+        expect(process2.cpuTimeNeeded).toBe(0);
+        expect(process2.isStateChanged()).toBe(false);
     });
 
     test("executeProcess function not running to completion", () => {
         const process = new Process(0, 30);
         process.executeProcess(25);
         expect(process.isFinished()).toBe(false);
-        expect(process.cpuTimeNeeded).toEqual(5);
-        expect(process.isStateChanged()).toEqual(false);
+        expect(process.cpuTimeNeeded).toBe(5);
+        expect(process.isStateChanged()).toBe(false);
     });
 
     test("executeProcess function on blocking process", () => {
@@ -87,28 +87,29 @@ describe('Process', () => {
 
         const queueSpy = sinon.spy(queue, 'emitInterrupt');
         process.executeProcess(15);
-        expect(queueSpy.calledWith(process, SchedulerInterrupt.PROCESS_BLOCKED)).toEqual(true);
-        expect(process.isStateChanged()).toEqual(true);
+        expect(queueSpy.calledOnce).toBe(true);
+        expect(process.isStateChanged()).toBe(true);
     });
 
     test("executeBlockingProcess function running to completion", () => {
         const process1 = new Process(0, 10, true);
         process1.setParentQueue(queue);
         process1.blockingTimeNeeded = 10;
+
         const process2 = new Process(0, 5, true);
         process2.setParentQueue(queue);
         process2.blockingTimeNeeded = 10;
 
         const queueSpy = sinon.spy(queue, 'emitInterrupt');
         process1.executeBlockingProcess(10);
-        expect(process1.blockingTimeNeeded).toEqual(0);
-        expect(queueSpy.calledWith(process1, SchedulerInterrupt.PROCESS_READY)).toEqual(true);
-        expect(process1.isStateChanged()).toEqual(true);
+        expect(process1.blockingTimeNeeded).toBe(0);
+        expect(queueSpy.calledWith(process1, SchedulerInterrupt.PROCESS_READY)).toBe(true);
+        expect(process1.isStateChanged()).toBe(true);
 
         process2.executeBlockingProcess(11);
-        expect(process2.blockingTimeNeeded).toEqual(0);
-        expect(queueSpy.calledWith(process2, SchedulerInterrupt.PROCESS_READY)).toEqual(true);
-        expect(process2.isStateChanged()).toEqual(true); 
+        expect(process2.blockingTimeNeeded).toBe(0);
+        expect(queueSpy.calledWith(process2, SchedulerInterrupt.PROCESS_READY)).toBe(true);
+        expect(process2.isStateChanged()).toBe(true); 
     });
 
     test("executeBlockingProcess function not running to completion", () => {
@@ -117,8 +118,9 @@ describe('Process', () => {
 
         const queueSpy = sinon.spy(queue, 'emitInterrupt');
         process.executeBlockingProcess(15);
-        expect(process.blockingTimeNeeded).toEqual(5);
-        expect(queueSpy.calledWith(process, SchedulerInterrupt.PROCESS_READY)).toEqual(false);
-        expect(process.isStateChanged()).toEqual(false);
+
+        expect(process.blockingTimeNeeded).toBe(5);
+        expect(queueSpy.called).toBe(false);
+        expect(process.isStateChanged()).toBe(false);
     });
 });
