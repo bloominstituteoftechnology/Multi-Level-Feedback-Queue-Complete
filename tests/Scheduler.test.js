@@ -27,9 +27,15 @@ describe('Scheduler', () => {
         expect(scheduler.allQueuesEmpty()).toBe(true);
 
         const process = new Process(0);
+        const blockingProcess = new Process(1);
+
         scheduler.addNewProcess(process);
+
+        const blockingQueue = scheduler._getBlockingQueue();
         const topPriorityRunningQueue = scheduler._getCPUQueue(0);
         const lowerPriorityRunningQueue = scheduler._getCPUQueue(1);
+
+        blockingQueue.enqueue(blockingProcess);
 
         expect(topPriorityRunningQueue.peek()).toBe(process); 
         expect(lowerPriorityRunningQueue.peek()).toBeUndefined();
@@ -40,6 +46,10 @@ describe('Scheduler', () => {
         expect(scheduler.allQueuesEmpty()).toBe(false);
 
         lowerPriorityRunningQueue.dequeue();
+
+        expect(scheduler.allQueuesEmpty()).toBe(false);
+
+        blockingQueue.dequeue();
 
         expect(scheduler.allQueuesEmpty()).toBe(true);
     });
